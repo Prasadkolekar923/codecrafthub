@@ -20,7 +20,13 @@ The server-side component is designed as a clean, dependency-light REST API usin
 
 ## ✨ Features
 
-- **Course Management (CRUD)**:
+- **Full-Stack Learning Platform**:
+  - **Interactive Single-Page Dashboard (`index.html`)**: Complete CRUD web interface built with vanilla HTML5, CSS3, and JavaScript (no heavy frontend frameworks).
+  - **Theme & Design**: Professional purple (`#8B5CF6`), amber (`#F59E0B`), and red (`#EF4444`) color scheme with responsive card and table layout.
+  - **Live Course Editing**: Edit modal with pre-filled inputs and real-time backend synchronization.
+  - **Status Indicators**: Clean badges for `Not Started`, `In Progress`, and `Completed`.
+  - **CORS Support**: Seamlessly connects whether launched via VS Code Live Server (port 5500) or directly through Flask.
+- **Course Management API (CRUD)**:
   - **Create**: Add new courses with details, target dates, and statuses.
   - **Read**: Fetch all courses or retrieve specific courses by ID.
   - **Update**: Modify course details, descriptions, target dates, and statuses.
@@ -34,7 +40,7 @@ The server-side component is designed as a clean, dependency-light REST API usin
 - **Bonus Capabilities**:
   - **Statistics Endpoint**: Aggregates total courses and breakdown by completion status (`/api/courses/stats`).
   - **Search Endpoint**: Fast keyword search across course names and descriptions (`/api/courses/search?q=<term>`).
-- **Comprehensive Testing Suite**: Includes both automated unit tests (`unittest`) and executable curl scripts.
+- **Comprehensive Testing Suite**: Includes automated unit tests (14 test cases in `test_app.py`) and executable curl / PowerShell scripts.
 
 ---
 
@@ -42,15 +48,42 @@ The server-side component is designed as a clean, dependency-light REST API usin
 
 ```plaintext
 codecrafthub/
-├── app.py              # Main Flask application & REST API routes
+├── app.py              # Main Flask application & REST API routes (with CORS & static serving)
+├── index.html          # Single-page CRUD learning dashboard (HTML, CSS, JS)
 ├── courses.json        # Persistent JSON data store (auto-created on startup)
 ├── requirements.txt    # Python package dependencies (Flask, Werkzeug)
-├── test_app.py         # Automated unit test suite (12 test cases)
+├── test_app.py         # Automated unit test suite (14 test cases)
 ├── test_endpoints.sh   # Automated curl test script for Bash / Linux / macOS
 ├── test_endpoints.ps1  # Automated test script for Windows PowerShell
 ├── .gitignore          # Git exclusion rules (cache, virtualenvs, etc.)
 └── README.md           # Project documentation and API guide
 ```
+
+---
+
+## 🖥️ Running the Learning Dashboard
+
+You can use the interactive dashboard in either of two ways:
+
+### Option A: Directly Through Flask (Simplest)
+1. Start the Flask application:
+   ```bash
+   python app.py
+   ```
+2. Open your web browser and navigate to:
+   ```text
+   http://localhost:5000/dashboard
+   ```
+   *(Or simply `http://localhost:5000` in any web browser)*
+
+### Option B: Using VS Code / IDE Live Server
+1. Ensure the Flask server is running on port 5000:
+   ```bash
+   python app.py
+   ```
+2. In VS Code or your IDE, right-click `index.html` and select **"Open with Live Server"**.
+3. The dashboard will launch in your browser and automatically communicate with `http://localhost:5000/api/courses`.
+
 
 ---
 

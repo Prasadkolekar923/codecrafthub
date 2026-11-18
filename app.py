@@ -68,12 +68,40 @@ def get_next_id(courses):
 
 
 # ==============================================================================
+# CORS Support for Frontend & Live Server
+# ==============================================================================
+
+@app.after_request
+def add_cors_headers(response):
+    """Allow Cross-Origin requests so the frontend can run on Live Server or any port."""
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS'
+    return response
+
+
+@app.route('/api/courses', methods=['OPTIONS'])
+@app.route('/api/courses/<path:subpath>', methods=['OPTIONS'])
+def options_handler(subpath=None):
+    """Handle CORS preflight requests."""
+    return ('', 204)
+
+
+# ==============================================================================
 # Root & Information Endpoint
 # ==============================================================================
 
 @app.route('/', methods=['GET'])
 def index():
-    """Welcome endpoint providing basic API information and documentation link."""
+    """
+    Serve either the frontend dashboard (if accessed via browser)
+    or the JSON API directory (if accessed by API clients/tests).
+    """
+    accept_header = request.headers.get('Accept', '')
+    if 'text/html' in accept_header and os.path.exists('index.html'):
+        with open('index.html', 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html'}
+
     return jsonify({
         'success': True,
         'message': 'Welcome to CodeCraftHub Learning Management System API',
@@ -84,9 +112,20 @@ def index():
             'PUT /api/courses/<id>': 'Update an existing course',
             'DELETE /api/courses/<id>': 'Delete a course',
             'GET /api/courses/stats': 'Get course statistics (bonus)',
-            'GET /api/courses/search?q=<term>': 'Search courses by keyword (bonus)'
+            'GET /api/courses/search?q=<term>': 'Search courses by keyword (bonus)',
+            'GET /dashboard': 'Interactive Web Dashboard'
         }
     }), 200
+
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    """Direct route to access the CodeCraftHub web dashboard."""
+    if os.path.exists('index.html'):
+        with open('index.html', 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html'}
+    return jsonify({'success': False, 'error': 'Dashboard index.html not found'}), 404
+
 
 
 # ==============================================================================

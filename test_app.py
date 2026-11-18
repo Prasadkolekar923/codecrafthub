@@ -35,11 +35,24 @@ class CodeCraftHubTestCase(unittest.TestCase):
 
     def test_root_endpoint(self):
         """Test GET / returns API welcome information."""
-        response = self.client.get('/')
+        response = self.client.get('/', headers={'Accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
         self.assertTrue(data['success'])
         self.assertIn('endpoints', data)
+
+    def test_dashboard_endpoint(self):
+        """Test GET /dashboard returns the frontend HTML."""
+        response = self.client.get('/dashboard')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'CodeCraftHub: Your Learning Management Platform', response.data)
+
+    def test_cors_headers(self):
+        """Test that CORS headers are returned for frontend compatibility."""
+        response = self.client.options('/api/courses')
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
+
 
     def test_get_empty_courses(self):
         """Test GET /api/courses when no courses exist."""
